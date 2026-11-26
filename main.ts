@@ -75,6 +75,15 @@ if (width !== 1024 || height !== 1024) {
   console.error(`entry.png is ${width}x${height}: expected the 1024x1024 front page`);
   process.exit(1);
 }
+// The composer writes an 8-bit truecolour PNG; any other depth or
+// colour type means the file was replaced by a different encoder, so
+// refuse it instead of submitting a page laid out for another format.
+const bitDepth = bytes[24];
+const colorType = bytes[25];
+if (bitDepth !== 8 || (colorType !== 2 && colorType !== 6)) {
+  console.error(`entry.png is ${bitDepth}-bit colour type ${colorType}: expected 8-bit truecolour`);
+  process.exit(1);
+}
 // The gate also requires a whole image: a PNG must end with its IEND
 // chunk, so refuse a truncated file instead of handing the gate bytes
 // it would score 0.
