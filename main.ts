@@ -68,6 +68,13 @@ if (width > 1024 || height > 1024 || size > 1024 * 1024) {
   console.error(`entry.png is ${width}x${height}, ${size} bytes: over the 1024x1024 / 1 MiB gate`);
   process.exit(1);
 }
+// This front page was composed at exactly 1024x1024: any other size
+// means a stale or wrong file got into the repository, so refuse it
+// instead of submitting a page laid out for a different canvas.
+if (width !== 1024 || height !== 1024) {
+  console.error(`entry.png is ${width}x${height}: expected the 1024x1024 front page`);
+  process.exit(1);
+}
 // The gate also requires a whole image: a PNG must end with its IEND
 // chunk, so refuse a truncated file instead of handing the gate bytes
 // it would score 0.
